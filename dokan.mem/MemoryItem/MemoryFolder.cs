@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace DokanMem
+namespace course.work
 {
-    //Отображает директорию в памяти; может иметь наследников (файлы и папки)
-    class MemoryFolder : MemoryItem
+    /// <summary>
+    /// Represents a directory in Memory; may have othe files or folders as
+    /// children. 
+    /// </summary>
+     public class MemoryFolder : MemoryItem
     {
         List<MemoryItem> children = new List<MemoryItem>();
 
@@ -16,7 +19,9 @@ namespace DokanMem
             Attributes = FileAttributes.Directory;
         }
 
+        /// <summary>
         /// The MemoryFolder and MemoryFile item-collection
+        /// </summary>
         internal List<MemoryItem> Children
         {
             get
@@ -46,8 +51,10 @@ namespace DokanMem
             return null;
         }
 
-
-        // создает папку и подпапки в MemoryFolder
+        /// <summary>
+        /// Creates a folder (and subfolders) in this MemoryFolder
+        /// </summary>
+        /// <param name="path">the path to be created</param>
         internal void CreatePath(string path)
         {
             string[] pathParts = path.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
@@ -55,20 +62,20 @@ namespace DokanMem
             {
                 MemoryFolder newFolder = null;
 
-                // найти ее
+                // find it,
                 var searchResult = 
                     from c in children
                     where c is MemoryFolder 
                     && c.Name.Equals(pathParts[0], StringComparison.OrdinalIgnoreCase)
                     select (c as MemoryFolder);
 
-                // или создать если не сущ
+                // or create it, if it doesn't exist;
                 if (searchResult.Count() > 0) 
                     newFolder = searchResult.First();
                 else
                     newFolder = new MemoryFolder(this, pathParts[0]);
 
-                // если нужно создать еще
+                // Create more?
                 if (pathParts.Length > 1)
                 {
                     string subPath = path.Remove(0, pathParts[0].Length + 1);
@@ -77,20 +84,21 @@ namespace DokanMem
             }
         }
 
-
-        // возвращает размер файлов и файлы в поддиректориях
+        /// <summary>
+        /// Returns the size of the files and the files in any subfolders
+        /// </summary>
         internal ulong TotalSize
         {
             get
             {
-                // общий размер файлов в данной папке
+                // the total size of the files in this folder;
                 ulong result = (ulong)(
                     from c in children //.AsParallel?
                     where c is MemoryFile
                     select (c as MemoryFile).Size
                     ).Sum();
 
-                // + размер подпапок 
+                // plus size of subfolders;
                 foreach (MemoryFolder folder in 
                     from c in children 
                     where c is MemoryFolder
@@ -103,6 +111,20 @@ namespace DokanMem
             }
         }
 
-        
+        /// <summary>
+        /// Returns a file from this folder
+        /// </summary>
+        /// <param name="name">The filename, without path</param>
+        /// <returns>A MemoryFile, with info on the file and it's contents, or 
+        /// null if it can't be found</returns>
+        internal MemoryFile FetchFile(string name)
+        {
+            var files =
+                from c in children 
+                where c is MemoryFile && c.Name.Equals(name, StringComparison.OrdinalIgnoreCase)
+                select c as MemoryFile;
+
+            return files.Count() > 0 ? files.First() : null;
+        }
     }
 }

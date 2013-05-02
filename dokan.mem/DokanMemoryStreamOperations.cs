@@ -1,47 +1,58 @@
-﻿//перегрузка системных функций, необходимо для работы
+﻿//перегрузка системных функций, необходимо для  работы
 
 using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Win32;
-using Dokan;
+using course.core;
 using System.Windows.Forms;
 using System.Threading;
 
-namespace DokanMem
+namespace course.work
 {
     class DokanMemoryStreamOperations : DokanOperations
     {
+        public DokanMemoryStreamOperations(RichTextBox _rtb)
+        {
+           rtb=_rtb;
+        }
+        RichTextBox rtb;
+        
         const string ROOT_FOLDER = "\\"; // корневая директория
-
-        static MemoryFolder _root = new MemoryFolder(null, string.Empty);
+        	
+        static MemoryFolder _root = new MemoryFolder(null, String.Empty); 
 
         #region DokanOperations members
 
         public int Cleanup(string filename, DokanFileInfo info) // удаление
         {
-            Console.WriteLine("deleted ", filename);
-
+          // string pushTolog  = "delete from "+ filename+"\n";
+          //  UtilityMethods.SetTextSafe(rtb, pushTolog);
+            
             return DokanNet.DOKAN_SUCCESS;
-
+            
 
         }
 
         public int CloseFile(string filename, DokanFileInfo info) //закрытие
         {
-            Console.WriteLine("closed ", filename);
+           // string pushTolog = "close file " + filename + "\n";
+            //UtilityMethods.SetTextSafe(rtb, pushTolog);
+           
             return DokanNet.DOKAN_SUCCESS;
         }
 
         public int CreateDirectory(string filename, DokanFileInfo info)
         {
             // получение родителя где создавать
-            string parentFolderPath = filename.GetPathPart();
+            string parentFolderPath = (filename).GetPathPart();
             MemoryFolder parentFolder = _root.GetFolderByPath(parentFolderPath);
 
             if (!parentFolder.Exists())
             {
-                Console.WriteLine("This is no path");
+                string pushTolog = "no path  \n";
+                UtilityMethods.SetTextSafe(rtb, pushTolog);
+           
                 return -DokanNet.ERROR_PATH_NOT_FOUND;
             }
 
@@ -49,134 +60,210 @@ namespace DokanMem
             string newName = filename.GetFilenamePart();
             if (newName.IndexOfAny(Path.GetInvalidFileNameChars()) > 0)
             {
-
+                
+                string pushTolog = "invalid name for " + filename + "\n";
+                UtilityMethods.SetTextSafe(rtb, pushTolog);
                 return -DokanNet.ERROR_INVALID_NAME;
             }
             if (string.IsNullOrEmpty(newName))
+            { 
+                 string pushTolog = " " + filename + "\n";
+                 UtilityMethods.SetTextSafe(rtb, pushTolog);
                 return -DokanNet.ERROR_INVALID_NAME;
-
+            }
             // если уже сущ
             MemoryFolder testFolder = _root.GetFolderByPath(filename);
             if (testFolder.Exists())
+            {
+                string pushTolog ="already exist " + filename + "\n";
+                UtilityMethods.SetTextSafe(rtb, pushTolog);
                 return -DokanNet.ERROR_ALREADY_EXISTS;
+            }
 
             // создание папки
             MemoryFolder newFolder = new MemoryFolder(parentFolder, newName);
 
             // информирование докана
-            return newFolder.Exists() ? DokanNet.DOKAN_SUCCESS : DokanNet.DOKAN_ERROR;
+            if (newFolder.Exists())
+            {
+                string pushTolog = "directory created " + filename + "\n";
+                UtilityMethods.SetTextSafe(rtb, pushTolog);
+                return DokanNet.DOKAN_SUCCESS; 
+            }
+            else {
+                string pushTolog = "directory error " + filename + "\n";
+                UtilityMethods.SetTextSafe(rtb, pushTolog);
+                return DokanNet.DOKAN_ERROR; 
+            }
         }
 
-        public int CreateFile(
-            string filename,
-            FileAccess access,
-            FileShare share,
-            FileMode mode,
-            FileOptions options,
-            DokanFileInfo info)
-        {
+		public int CreateFile(
+		    string filename,
+		    FileAccess access,
+		    FileShare share,
+		    FileMode mode,
+		    FileOptions options,
+		    DokanFileInfo info)
+		{
             if (filename == ROOT_FOLDER) //
+            {
+                //string pushTolog = "created file " + filename + "\n";
+                //UtilityMethods.SetTextSafe(rtb, pushTolog);
                 return DokanNet.DOKAN_SUCCESS;
-
-            // получить род папку где создать файл
-            MemoryFolder parentFolder = _root.GetFolderByPath(filename.GetPathPart());
-
-            // если папка не существует
-            if (!parentFolder.Exists())
-                return -DokanNet.ERROR_PATH_NOT_FOUND;
-
-            // получение имени файла
-            string newName = filename.GetFilenamePart();
-
-            // проверка имени директории и файла
-            if (newName.IndexOfAny(Path.GetInvalidFileNameChars()) > 0)
-                return -DokanNet.ERROR_INVALID_NAME;
-            if (string.IsNullOrEmpty(newName))
-                return -DokanNet.ERROR_INVALID_NAME;
-
-            // we'll need this file later on;
-            MemoryFile thisFile = (parentFolder.FetchFile(newName));
-
-            // this is called when we should create a new file;
-            // so raise an error if it's a directory;
-            MemoryFolder testFolder = _root.GetFolderByPath(filename);
-            if (testFolder.Exists())
-            {
-                //если это папка
-                info.IsDirectory = true;
-                if (mode == FileMode.Open || mode == FileMode.OpenOrCreate)
-                {
-                    //файл это папка;
-                    return DokanNet.DOKAN_SUCCESS;
-                }
-
-                // невозможно содать файл с таким же именем как у папки
-                return -DokanNet.ERROR_ALREADY_EXISTS;
             }
-
-            // если нет папки с таким именем и есть родитель;
-            // пробуем использовать файл
-            switch (mode)
+		    // получить род папку где создать файл
+		    MemoryFolder parentFolder = _root.GetFolderByPath(filename.GetPathPart());
+		
+		    // если папка не существует
+            if (!parentFolder.Exists())
             {
-                // открыть файл если он сущ или создать новый файл
-                case FileMode.Append:
+                string pushTolog = "created NO file " + filename + "\n";
+                UtilityMethods.SetTextSafe(rtb, pushTolog);
+                return -DokanNet.ERROR_PATH_NOT_FOUND;
+            }
+		    // получение имени файла
+		    string newName = filename.GetFilenamePart();
+            string newPath = filename.GetPathPart();
+		    
+		    // проверка имени директории и файла
+            if (newName.IndexOfAny(Path.GetInvalidFileNameChars()) > 0)
+            {
+                string pushTolog = "invalid name " + filename + "\n";
+                UtilityMethods.SetTextSafe(rtb, pushTolog);
+                return -DokanNet.ERROR_INVALID_NAME;
+            }
+            if (string.IsNullOrEmpty(newName))
+            {
+                string pushTolog = "empty file name " + filename + "\n";
+                UtilityMethods.SetTextSafe(rtb, pushTolog);
+                return -DokanNet.ERROR_INVALID_NAME;
+            }
+		    // we'll need this file later on;
+		    MemoryFile thisFile = (parentFolder.FetchFile(newName));
+		
+		    // this is called when we should create a new file;
+		    // so raise an error if it's a directory;
+		    MemoryFolder testFolder = _root.GetFolderByPath(filename);
+		    if (testFolder.Exists())
+		    {
+		        //если это папка
+		        info.IsDirectory = true;
+		        if (mode == FileMode.Open || mode == FileMode.OpenOrCreate)
+		        {
+                    //файл это папка;
+                    string pushTolog = "created file " + filename + "\n";
+                    UtilityMethods.SetTextSafe(rtb, pushTolog);
+                    return DokanNet.DOKAN_SUCCESS;
+		        }
+
+                string log = "already exists " + filename + "\n";
+                UtilityMethods.SetTextSafe(rtb, log);
+		        // невозможно содать файл с таким же именем как у папки
+		        return -DokanNet.ERROR_ALREADY_EXISTS;
+		    }
+            
+		
+		    // если нет папки с таким именем и есть родитель;
+		    // пробуем использовать файл
+		    switch (mode)
+		    {
+		        // открыть файл если он сущ или создать новый файл
+		        case FileMode.Append:
                     if (!thisFile.Exists())
-                        MemoryFile.New(parentFolder, newName);
-                    return DokanNet.DOKAN_SUCCESS;
-
-                // определяет что ос должна создать новый файл
-                // если файл сущ перезаписать
-                case FileMode.Create:
-                    //if (!thisFile.Exists()) 
-                    MemoryFile.New(parentFolder, newName);
-                    //else
-                    return DokanNet.DOKAN_SUCCESS;
-
-                // определяет что ос должна создать новый файл
-                // если файл сущ, исключение IOException
-                case FileMode.CreateNew:
-                    if (thisFile.Exists())
-                        return -DokanNet.ERROR_ALREADY_EXISTS;
-                    MemoryFile.New(parentFolder, newName);
-                    return DokanNet.DOKAN_SUCCESS;
-
-                // определяет что ос должна открыть сущ файл 
-                // System.IO.FileNotFoundException если файл не сущ.
-                case FileMode.Open:
-                    if (!thisFile.Exists())
-                        return -DokanNet.ERROR_FILE_NOT_FOUND;
-                    else
+                    {
+                        MemoryFile.New(parentFolder, newName, newPath);
+                        string pushTolog = "created file " + filename + "\n";
+                        UtilityMethods.SetTextSafe(rtb, pushTolog);
                         return DokanNet.DOKAN_SUCCESS;
+                    } break;
+		        // определяет что ос должна создать новый файл
+		        // если файл сущ перезаписать
+		        case FileMode.Create:
+                    if (!thisFile.Exists())
+                    {
+                        MemoryFile.New(parentFolder, newName, newPath);
+                        //else
+                         string pushTolog1 = "created file " + filename + "\n";
+                        UtilityMethods.SetTextSafe(rtb, pushTolog1);
+                        return DokanNet.DOKAN_SUCCESS;
+                    }
+                    break;
+                // определяет что ос должна создать новый файл
+		        // если файл сущ, исключение IOException
+		        case FileMode.CreateNew:
+                    if (thisFile.Exists())
+                    {
+                        String pushTolog = "exists " + filename + "\n";
+                        UtilityMethods.SetTextSafe(rtb, pushTolog);
+                        return DokanNet.DOKAN_SUCCESS;
+                    }
+                    else {
+		            MemoryFile.New(parentFolder, newName,newPath);
+                  //  Console.WriteLine("file is created ", filename);
+                    
+		            return DokanNet.DOKAN_SUCCESS;
+                    } break;
 
                 // определяет что ос должна открыть сущ файл 
-                // иначе создаем новый файл
-                case FileMode.OpenOrCreate:
+		        // System.IO.FileNotFoundException если файл не сущ.
+		        case FileMode.Open:
+                   if (!thisFile.Exists())
+                    {
+                        //pushTolog = "file not found " + filename + "\n";
+                        //UtilityMethods.SetTextSafe(rtb, pushTolog);
+                        return -DokanNet.ERROR_FILE_NOT_FOUND;
+                    }
+                    else
+                    {
+                        string pushTolog3 = "created file " + filename + "\n";
+                        UtilityMethods.SetTextSafe(rtb, pushTolog3);
+                        return DokanNet.DOKAN_SUCCESS;
+                   } break;
+
+                // определяет что ос должна открыть сущ файл 
+		        // иначе создаем новый файл
+		        case FileMode.OpenOrCreate:
                     if (!thisFile.Exists())
-                        MemoryFile.New(parentFolder, newName);
-                    return DokanNet.DOKAN_SUCCESS;
+                    {
+                        MemoryFile.New(parentFolder, newName, newPath);
+                        string pushTolog = "created file " + filename + "\n";
+                        UtilityMethods.SetTextSafe(rtb, pushTolog);
+                        return DokanNet.DOKAN_SUCCESS;
+                    } break;
 
                 // определяет что ос должна открыть сущ файл  
-                // открытый файл, обнуляем
-                case FileMode.Truncate:
+		        // открытый файл, обнуляем
+		        case FileMode.Truncate:
                     if (!thisFile.Exists())
-                        thisFile = MemoryFile.New(parentFolder, newName);
-                    thisFile.Size = 0;
-                    return DokanNet.DOKAN_SUCCESS;
-            }
+                    {
+                        thisFile = MemoryFile.New(parentFolder, newName, newPath);
+                        thisFile.Size = 0;
+                        string pushTolog = "created file " + filename + "\n";
+                        UtilityMethods.SetTextSafe(rtb, pushTolog);
+                        return DokanNet.DOKAN_SUCCESS;
+                    } break;
+		    }
 
-            return DokanNet.DOKAN_ERROR;
-        }
-
+            string pushTolog2 = "error in creating file " + filename + "\n";
+            UtilityMethods.SetTextSafe(rtb, pushTolog2);
+		    return DokanNet.DOKAN_ERROR;
+		}
+		
         public int DeleteDirectory(string filename, DokanFileInfo info)
         {
             // то что удаляем
             MemoryFolder folder = _root.GetFolderByPath(filename);
 
             if (!folder.Exists())
+            {
+                string pushTolog = "path no found " + filename + "\n";
                 return -DokanNet.ERROR_PATH_NOT_FOUND;
-
+            }
             // отцепить папку от родителя
             folder.Parent.Children.Remove(folder);
+            string pushTolog1 = "directoty deleted " + filename + "\n";
+            UtilityMethods.SetTextSafe(rtb, pushTolog1);
+            Directory.Delete(MemoryFile._root+filename,true);
             return DokanNet.DOKAN_SUCCESS;
         }
 
@@ -188,19 +275,27 @@ namespace DokanMem
 
 
             if (!parentFolder.Exists())
+            {
+                string pushTolog = "path no found " + filename + "\n";
+                UtilityMethods.SetTextSafe(rtb, pushTolog);
                 return -DokanNet.ERROR_PATH_NOT_FOUND;
-
+            }
             // найти файл
             MemoryFile file = parentFolder.FetchFile(
                 filename.GetFilenamePart());
 
 
             if (!file.Exists())
+            {
+                string pushTolog = "file not found " + filename + "\n";
+                UtilityMethods.SetTextSafe(rtb, pushTolog);
                 return -DokanNet.ERROR_FILE_NOT_FOUND;
-
+            }
             // удалить файл;
             parentFolder.Children.Remove(file);
-
+            string pushTolog1 = "deleted file  " + filename + "\n";
+            UtilityMethods.SetTextSafe(rtb, pushTolog1);
+            File.Delete(MemoryFile._root + filename);
             return DokanNet.DOKAN_SUCCESS;
         }
 
@@ -209,6 +304,8 @@ namespace DokanMem
             string filename,
             DokanFileInfo info)
         {
+           string pushTolog = "!!!!!!!!!!!!!!!!!! \n";
+           UtilityMethods.SetTextSafe(rtb, pushTolog);
             return DokanNet.DOKAN_SUCCESS;
         }
 
@@ -218,6 +315,27 @@ namespace DokanMem
             System.Collections.ArrayList files,
             DokanFileInfo info)
         {
+               // do we have this folder?
+            MemoryFolder folder = filename == ROOT_FOLDER ? _root : _root.GetFolderByPath(filename);
+            if (!folder.Exists())
+                return -DokanNet.ERROR_FILE_NOT_FOUND;
+
+            // we have this folder, list all it's children;
+            foreach (MemoryItem item in folder.Children)
+            {
+                FileInformation fileinfo = new FileInformation();
+                fileinfo.FileName = item.Name;
+                fileinfo.Attributes = item.Attributes;
+                fileinfo.LastAccessTime = item.LastAccessTime;
+                fileinfo.LastWriteTime = item.LastWriteTime;
+                fileinfo.CreationTime = item.CreationTime;
+
+                // if it's a file, then also report a size;
+                if (item is MemoryFile)
+                	fileinfo.Length = (item as MemoryFile).Size;
+
+                files.Add(fileinfo);
+            }
             return DokanNet.DOKAN_SUCCESS;
         }
 
@@ -232,13 +350,17 @@ namespace DokanMem
                 //если это папка
                 MemoryFolder folder = (filename == ROOT_FOLDER) ? _root : _root.GetFolderByPath(filename);
                 if (!folder.Exists())
+                {
+                    string pushTolog = "path no found " + filename + "\n";
+                    UtilityMethods.SetTextSafe(rtb, pushTolog);
                     return -DokanNet.ERROR_PATH_NOT_FOUND;
-
+                }
                 fileinfo.FileName = folder.Name;
                 fileinfo.Attributes = folder.Attributes;
                 fileinfo.LastAccessTime = folder.LastAccessTime;
                 fileinfo.LastWriteTime = folder.LastWriteTime;
                 fileinfo.CreationTime = folder.CreationTime;
+                rtb.Text += "information shows " + filename + "\n";
                 return DokanNet.DOKAN_SUCCESS;
             }
             else
@@ -261,7 +383,7 @@ namespace DokanMem
                 fileinfo.LastAccessTime = file.LastAccessTime;
                 fileinfo.LastWriteTime = file.LastWriteTime;
                 fileinfo.CreationTime = file.CreationTime;
-                fileinfo.Length = file.Size;
+                fileinfo.Length = file.Size; 
                 return DokanNet.DOKAN_SUCCESS;
             }
         }
@@ -281,6 +403,8 @@ namespace DokanMem
             bool replace,
             DokanFileInfo info)
         {
+            string pushTolog = "file move from " + filename + "to" + newname + "\n";
+            UtilityMethods.SetTextSafe(rtb, pushTolog);
             // найти нового родителя 
             MemoryFolder newParent = _root.GetFolderByPath(newname.GetPathPart());
 
@@ -291,18 +415,27 @@ namespace DokanMem
             // проверка что нет папки с именем файла
             MemoryFolder testNewFolder1 = _root.GetFolderByPath(newname);
             if (testNewFolder1.Exists())
+            {
+                pushTolog = "already exists"+filename+"\n";
+                UtilityMethods.SetTextSafe(rtb, pushTolog);
                 return -DokanNet.ERROR_ALREADY_EXISTS;
-
+            }
             // проверка что нет файла с таким именем
             MemoryFile testNewFile = newParent.FetchFile(newname.GetFilenamePart());
             if (testNewFile.Exists())
+            {
+               pushTolog = "already exists no move \n";
+               UtilityMethods.SetTextSafe(rtb, pushTolog);
                 return -DokanNet.ERROR_FILE_EXISTS;
-
+            }
             // проверка имени
             string newName = newname.GetFilenamePart();
             if (string.IsNullOrEmpty(newName))
+            {
+                pushTolog = "invalid name no move \n";
+                UtilityMethods.SetTextSafe(rtb, pushTolog);
                 return -DokanNet.ERROR_INVALID_NAME;
-
+            }
             if (info.IsDirectory)
             {
                 // поиск папки которую нужно переименовать
@@ -318,8 +451,17 @@ namespace DokanMem
 
                 // переименовываем
                 sourceFolder.Name = newName;
-
-
+                try
+                {
+                    Directory.Move(MemoryFile._root + filename, MemoryFile._root + newname);
+                }
+                catch (Exception)
+                {
+                   
+                    pushTolog = "move operation done exception\n";
+                    UtilityMethods.SetTextSafe(rtb, pushTolog);
+                
+                }
                 return DokanNet.DOKAN_SUCCESS;
             }
             else
@@ -330,8 +472,11 @@ namespace DokanMem
                 //найти род директорию файла
                 MemoryFolder parentFolder = _root.GetFolderByPath(filename.GetPathPart());
                 if (!parentFolder.Exists())
+                {
+                    string pushTolog1 = "already exists no move \n";
+                    UtilityMethods.SetTextSafe(rtb, pushTolog1);
                     return -DokanNet.ERROR_PATH_NOT_FOUND;
-
+                }
                 // если есть файл
                 MemoryFile thisFile = parentFolder.FetchFile(name);
                 if (!thisFile.Exists())
@@ -343,7 +488,17 @@ namespace DokanMem
                 // переименовываение файла
                 thisFile.Name = newName;
 
-
+                pushTolog = "move operation done\n";
+                UtilityMethods.SetTextSafe(rtb, pushTolog);
+                try
+                {
+                    File.Move(MemoryFile._root + filename, MemoryFile._root + newname);
+                }
+                catch (Exception e)
+                {
+                    pushTolog = "move operation done exception\n";
+                    UtilityMethods.SetTextSafe(rtb, pushTolog);
+                }
                 return DokanNet.DOKAN_SUCCESS;
             }
         }
@@ -366,18 +521,18 @@ namespace DokanMem
             ref uint readBytes,
             long offset,
             DokanFileInfo info)
-        {
+        {        	
             // поиск папки родителя
             MemoryFolder parentFolder = _root.GetFolderByPath(filename.GetPathPart());
 
             if (!parentFolder.Exists())
                 return -DokanNet.ERROR_PATH_NOT_FOUND;
-
+              
             // получаем файл
             string name = filename.GetFilenamePart();
             MemoryFile file = parentFolder.FetchFile(name);
 
-
+      
             if (!file.Exists())
                 return -DokanNet.ERROR_FILE_NOT_FOUND;
 
@@ -392,7 +547,7 @@ namespace DokanMem
             // поиск родителя
             MemoryFolder parentFolder = _root.GetFolderByPath(filename.GetPathPart());
 
-
+           
             if (!parentFolder.Exists())
                 return -DokanNet.ERROR_PATH_NOT_FOUND;
 
@@ -400,14 +555,14 @@ namespace DokanMem
             string name = filename.GetFilenamePart();
             MemoryFile file = parentFolder.FetchFile(name);
 
-
+          
             if (!file.Exists())
                 return -DokanNet.ERROR_FILE_NOT_FOUND;
 
             //если размер превышает выделенный расширить размер файла
             if (offset + buffer.Length > file.Size)
-                file.Size = offset + buffer.Length;
-
+            	file.Size = offset + buffer.Length;
+                        
             // запись
             writtenBytes = file.Write(offset, buffer);
             return DokanNet.DOKAN_SUCCESS;
@@ -418,7 +573,7 @@ namespace DokanMem
             // получение родителя
             MemoryFolder parentFolder = _root.GetFolderByPath(filename.GetPathPart());
 
-
+            
             if (!parentFolder.Exists())
                 return -DokanNet.ERROR_PATH_NOT_FOUND;
 
@@ -426,11 +581,11 @@ namespace DokanMem
             string name = filename.GetFilenamePart();
             MemoryFile file = parentFolder.FetchFile(name);
 
-
+           
             if (!file.Exists())
                 return -DokanNet.ERROR_FILE_NOT_FOUND;
 
-            file.Size = length;
+           	file.Size = length;
             return DokanNet.DOKAN_SUCCESS;
         }
 
@@ -440,7 +595,7 @@ namespace DokanMem
             // получить родителя
             MemoryFolder parentFolder = _root.GetFolderByPath(filename.GetPathPart());
 
-
+         
             if (!parentFolder.Exists())
                 return -DokanNet.ERROR_PATH_NOT_FOUND;
 
@@ -448,11 +603,11 @@ namespace DokanMem
             string name = filename.GetFilenamePart();
             MemoryFile file = parentFolder.FetchFile(name);
 
-
+   
             if (!file.Exists())
                 return -DokanNet.ERROR_FILE_NOT_FOUND;
 
-            file.Size = length;
+			file.Size = length;
             return DokanNet.DOKAN_SUCCESS;
         }
 
@@ -493,12 +648,12 @@ namespace DokanMem
             ref ulong totalFreeBytes,
             DokanFileInfo info)
         {
-            totalBytes = (ulong)Environment.WorkingSet;
+            totalBytes = (ulong)Environment.WorkingSet + _root.TotalSize;
 
             // вычисление сколько свободно памяти
-            freeBytesAvailable = totalBytes - _root.TotalSize;
+            freeBytesAvailable = (ulong)Environment.WorkingSet;
             // ???
-            totalFreeBytes = int.MaxValue;
+            totalFreeBytes = 1000000;
 
             return DokanNet.DOKAN_SUCCESS;
         }

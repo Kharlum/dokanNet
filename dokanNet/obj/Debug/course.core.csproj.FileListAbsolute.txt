@@ -2,3 +2,13 @@ e:\Dokan.Mem_src\DokanNet\bin\Debug\course.core.dll
 e:\Dokan.Mem_src\DokanNet\bin\Debug\course.core.pdb
 e:\Dokan.Mem_src\DokanNet\obj\Debug\course.core.dll
 e:\Dokan.Mem_src\DokanNet\obj\Debug\course.core.pdb
+d:\kurse_dokan\DokanNet\bin\Debug\course.core.dll
+d:\kurse_dokan\DokanNet\bin\Debug\course.core.pdb
+d:\kurse_dokan\DokanNet\obj\Debug\course.core.dll
+d:\kurse_dokan\DokanNet\obj\Debug\course.core.pdb
+d:\kurse_dokan\DokanNet\obj\Debug\course.core.csprojResolveAssemblyReference.cache
+F:\kurse_dokan\DokanNet\bin\Debug\course.core.dll
+F:\kurse_dokan\DokanNet\bin\Debug\course.core.pdb
+F:\kurse_dokan\DokanNet\obj\Debug\course.core.csprojResolveAssemblyReference.cache
+F:\kurse_dokan\DokanNet\obj\Debug\course.core.dll
+F:\kurse_dokan\DokanNet\obj\Debug\course.core.pdb

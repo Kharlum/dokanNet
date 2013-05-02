@@ -1,13 +1,13 @@
 ﻿using System;
 using System.IO;
 
-namespace DokanMem
+namespace course.work
 {
     /// <summary>
     /// Base class;
     /// Every folder or file in memory gets derived from this thing
     /// </summary>
-    class MemoryItem
+    public class MemoryItem
     {
         MemoryFolder _parent;
 
@@ -16,7 +16,7 @@ namespace DokanMem
         	throw new NotSupportedException();
         }
         
-        protected MemoryItem(MemoryFolder parent, string name)
+        public MemoryItem(MemoryFolder parent, string name)
         {
             Parent = parent;
             Name = name;

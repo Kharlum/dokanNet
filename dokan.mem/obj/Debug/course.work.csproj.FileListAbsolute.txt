@@ -5,3 +5,17 @@ e:\Dokan.Mem_src\Dokan.Mem\bin\Debug\course.core.dll
 e:\Dokan.Mem_src\Dokan.Mem\bin\Debug\course.core.pdb
 e:\Dokan.Mem_src\Dokan.Mem\obj\Debug\course.work.dll
 e:\Dokan.Mem_src\Dokan.Mem\obj\Debug\course.work.pdb
+d:\kurse_dokan\Dokan.Mem\bin\Debug\course.work.dll
+d:\kurse_dokan\Dokan.Mem\bin\Debug\course.work.pdb
+d:\kurse_dokan\Dokan.Mem\bin\Debug\course.core.dll
+d:\kurse_dokan\Dokan.Mem\bin\Debug\course.core.pdb
+d:\kurse_dokan\Dokan.Mem\obj\Debug\course.work.csprojResolveAssemblyReference.cache
+d:\kurse_dokan\Dokan.Mem\obj\Debug\course.work.dll
+d:\kurse_dokan\Dokan.Mem\obj\Debug\course.work.pdb
+F:\kurse_dokan\Dokan.Mem\bin\Debug\course.work.dll
+F:\kurse_dokan\Dokan.Mem\bin\Debug\course.work.pdb
+F:\kurse_dokan\Dokan.Mem\bin\Debug\course.core.dll
+F:\kurse_dokan\Dokan.Mem\bin\Debug\course.core.pdb
+F:\kurse_dokan\Dokan.Mem\obj\Debug\course.work.csprojResolveAssemblyReference.cache
+F:\kurse_dokan\Dokan.Mem\obj\Debug\course.work.dll
+F:\kurse_dokan\Dokan.Mem\obj\Debug\course.work.pdb
