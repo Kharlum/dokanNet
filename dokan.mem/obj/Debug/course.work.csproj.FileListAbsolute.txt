@@ -1,0 +1,7 @@
+e:\Dokan.Mem_src\Dokan.Mem\obj\Debug\course.work.csprojResolveAssemblyReference.cache
+e:\Dokan.Mem_src\Dokan.Mem\bin\Debug\course.work.dll
+e:\Dokan.Mem_src\Dokan.Mem\bin\Debug\course.work.pdb
+e:\Dokan.Mem_src\Dokan.Mem\bin\Debug\course.core.dll
+e:\Dokan.Mem_src\Dokan.Mem\bin\Debug\course.core.pdb
+e:\Dokan.Mem_src\Dokan.Mem\obj\Debug\course.work.dll
+e:\Dokan.Mem_src\Dokan.Mem\obj\Debug\course.work.pdb

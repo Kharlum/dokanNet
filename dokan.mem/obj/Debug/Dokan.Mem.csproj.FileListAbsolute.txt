@@ -1,0 +1,7 @@
+e:\Dokan.Mem_src\Dokan.Mem\bin\Debug\Dokan.Mem.exe
+e:\Dokan.Mem_src\Dokan.Mem\bin\Debug\Dokan.Mem.pdb
+e:\Dokan.Mem_src\Dokan.Mem\bin\Debug\DokanNet.dll
+e:\Dokan.Mem_src\Dokan.Mem\bin\Debug\DokanNet.pdb
+e:\Dokan.Mem_src\Dokan.Mem\obj\Debug\Dokan.Mem.csprojResolveAssemblyReference.cache
+e:\Dokan.Mem_src\Dokan.Mem\obj\Debug\Dokan.Mem.exe
+e:\Dokan.Mem_src\Dokan.Mem\obj\Debug\Dokan.Mem.pdb
