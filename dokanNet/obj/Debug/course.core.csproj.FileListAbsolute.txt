@@ -1,0 +1,4 @@
+e:\Dokan.Mem_src\DokanNet\bin\Debug\course.core.dll
+e:\Dokan.Mem_src\DokanNet\bin\Debug\course.core.pdb
+e:\Dokan.Mem_src\DokanNet\obj\Debug\course.core.dll
+e:\Dokan.Mem_src\DokanNet\obj\Debug\course.core.pdb
