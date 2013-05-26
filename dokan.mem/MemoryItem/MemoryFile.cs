@@ -1,7 +1,8 @@
 ﻿using System;
 using System.IO;
+using Thought.Research;
 
-namespace course.work
+namespace DokanMem
 {
     
     class MemoryFile : MemoryItem
@@ -17,25 +18,31 @@ namespace course.work
                 & FileAttributes.NotContentIndexed;
         }
 
-        internal  long Size
+        internal override long Size
         {
         	get { return _content.Length; }
 			set 
 			{ 				
-				//		
+				if (_content.Length != value)
+				{
+					_content.SetLength(value);
+				}				
 			}
         }
         
-        internal uint Write(long offset, byte[] buffer)
+        internal override uint Write(long offset, byte[] buffer)
         {
-            //
+            Stream writeStream = _content;
+            writeStream.Seek(offset, SeekOrigin.Begin);
+            writeStream.Write(buffer, 0, buffer.Length);
+            return (uint)buffer.Length;
         }
         
-        internal  uint Read(long offset, byte[] buffer)
+        internal override uint Read(long offset, byte[] buffer)
         {
-        	//
+        	Stream readStream = _content;
+            readStream.Seek(offset, SeekOrigin.Begin);
+            return (uint)readStream.Read(buffer, 0, buffer.Length);
         }
-
-       
     }
 }

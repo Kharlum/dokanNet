@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace course.work
+namespace DokanMem
 {
+    //Отображает директорию в памяти; может иметь наследников (файлы и папки)
     class MemoryFolder : MemoryItem
     {
         List<MemoryItem> children = new List<MemoryItem>();
@@ -15,6 +16,7 @@ namespace course.work
             Attributes = FileAttributes.Directory;
         }
 
+        /// The MemoryFolder and MemoryFile item-collection
         internal List<MemoryItem> Children
         {
             get
@@ -44,6 +46,8 @@ namespace course.work
             return null;
         }
 
+
+        // создает папку и подпапки в MemoryFolder
         internal void CreatePath(string path)
         {
             string[] pathParts = path.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
@@ -51,20 +55,20 @@ namespace course.work
             {
                 MemoryFolder newFolder = null;
 
-                // find it,
+                // найти ее
                 var searchResult = 
                     from c in children
                     where c is MemoryFolder 
                     && c.Name.Equals(pathParts[0], StringComparison.OrdinalIgnoreCase)
                     select (c as MemoryFolder);
 
-                // or create it, if it doesn't exist;
+                // или создать если не сущ
                 if (searchResult.Count() > 0) 
                     newFolder = searchResult.First();
                 else
                     newFolder = new MemoryFolder(this, pathParts[0]);
 
-                // Create more?
+                // если нужно создать еще
                 if (pathParts.Length > 1)
                 {
                     string subPath = path.Remove(0, pathParts[0].Length + 1);
@@ -73,7 +77,31 @@ namespace course.work
             }
         }
 
-        
+
+        // возвращает размер файлов и файлы в поддиректориях
+        internal ulong TotalSize
+        {
+            get
+            {
+                // общий размер файлов в данной папке
+                ulong result = (ulong)(
+                    from c in children //.AsParallel?
+                    where c is MemoryFile
+                    select (c as MemoryFile).Size
+                    ).Sum();
+
+                // + размер подпапок 
+                foreach (MemoryFolder folder in 
+                    from c in children 
+                    where c is MemoryFolder
+                    select c)
+                {
+                    result += folder.TotalSize;
+                }
+
+                return result;
+            }
+        }
 
         
     }

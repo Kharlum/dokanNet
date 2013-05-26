@@ -1,9 +1,12 @@
 ﻿using System;
 using System.IO;
 
-namespace course.work
+namespace DokanMem
 {
-    
+    /// <summary>
+    /// Base class;
+    /// Every folder or file in memory gets derived from this thing
+    /// </summary>
     class MemoryItem
     {
         MemoryFolder _parent;
@@ -23,6 +26,9 @@ namespace course.work
             LastWriteTime = DateTime.Now;
         }
 
+        /// <summary>
+        /// This is a reference to the parent-folder, where this item is located in
+        /// </summary>
         public MemoryFolder Parent
         {
             get
@@ -41,14 +47,35 @@ namespace course.work
             }
         }
 
+        /// <summary>
+        /// This is the name of the item (file or folder), without a path
+        /// </summary>
         public string Name { get; set; }
 
+        /// <summary>
+        /// The represent the attributes of the item;
+        /// flags indicating whether it's a readonly/hidden
+        /// </summary>
         public FileAttributes Attributes { get; set; }
 
+        //
+        // These represent the filedates;        
         public DateTime LastAccessTime { get; set; }
         public DateTime LastWriteTime { get; set; }
         public DateTime CreationTime { get; set; }
 
-        
+        /// <summary>
+        /// Returns the full path to the memory-item
+        /// </summary>
+        public string FullPath
+        {
+            get
+            {
+                if (_parent == null)
+                    return Name;
+                else
+                    return _parent.FullPath + "\\" + Name;
+            }
+        }
     }
 }
