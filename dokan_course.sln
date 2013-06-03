@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "course.work", "Dokan.Mem\co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "course.gui", "course.gui\course.gui.csproj", "{E7609BC2-FB10-492B-A977-1EDA0560338C}"
 EndProject
+Project("{F088123C-0E9E-452A-89E6-6BA2F21D5CAC}") = "Diagramma1", "Diagramma1\Diagramma1.modelproj", "{7A0F430A-33BE-435A-91C7-46A417EE9A72}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{E7609BC2-FB10-492B-A977-1EDA0560338C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E7609BC2-FB10-492B-A977-1EDA0560338C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E7609BC2-FB10-492B-A977-1EDA0560338C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A0F430A-33BE-435A-91C7-46A417EE9A72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A0F430A-33BE-435A-91C7-46A417EE9A72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A0F430A-33BE-435A-91C7-46A417EE9A72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A0F430A-33BE-435A-91C7-46A417EE9A72}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
